@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 
-train_data=pd.read_csv('new_train_tag.csv')
-test_data=pd.read_csv('new_test_tag.csv')
+train_data=pd.read_csv('data/clean_train_tag.csv')
+test_data=pd.read_csv('data/clean_test_tag.csv')
 #性别转化为0 1
 train_data['gdr_cd'][train_data['gdr_cd']=='F']=0
 train_data['gdr_cd'][train_data['gdr_cd']=='M']=1
@@ -71,5 +71,5 @@ test_data['his_lng_ovd_day_cls']=0
 test_data['his_lng_ovd_day_cls'][test_data['his_lng_ovd_day']>0]=1
 test_data['his_lng_ovd_day_cls'][test_data['his_lng_ovd_day']<=0]=0
 
-train_data.to_csv('train_tag.csv',index=False)
-test_data.to_csv('test_tag.csv',index=False)
+train_data.to_csv('data/train_tag.csv',index=False)
+test_data.to_csv('data/test_tag.csv',index=False)

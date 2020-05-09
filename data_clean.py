@@ -80,5 +80,5 @@ test_data['gdr_cd'][test_data['gdr_cd']=='\\N']=test_data['gdr_cd'].mode()[0]
 test_data['mrg_situ_cd'][test_data['mrg_situ_cd']=='\\N']=test_data['mrg_situ_cd'].mode()[0]
 test_data['acdm_deg_cd'][test_data['acdm_deg_cd']=='\\N']=test_data['acdm_deg_cd'].mode()[0]
 train_data=train_data[train_data['acdm_deg_cd']!='\\N']
-train_data.to_csv('new_train_tag.csv',index=False)
-test_data.to_csv('new_test_tag.csv',index=False)
+train_data.to_csv('data/clean_train_tag.csv',index=False)
+test_data.to_csv('data/clean_test_tag.csv',index=False)
