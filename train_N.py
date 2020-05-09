@@ -7,7 +7,7 @@ from xgboost import XGBClassifier
 import math
 import random
 train_data=pd.read_csv('data/train_tag.csv',index_col=0)
-test_data=pd.read_csv('评分数据集_tag.csv',index_col=0)
+test_data=pd.read_csv('评分数据集_tag_b.csv',index_col=0)
 test_data=test_data[test_data['hav_car_grp_ind']=='\\N']
 
 cols=[x for i,x in enumerate(test_data.columns) if test_data.iat[0,i]=='\\N']
@@ -30,7 +30,7 @@ train_X,test_X, train_y, test_y = train_test_split(train_data,
                                                    label,
                                                    test_size = 0.2)
 #clf=RandomForestClassifier(n_estimators=1000,n_jobs=-1,max_features='sqrt')
-clf=XGBClassifier(max_depth=3, learning_rate=0.1, n_estimators=1000, 
+clf=XGBClassifier(max_depth=4, learning_rate=0.1, n_estimators=1000, 
                    silent=True, objective='binary:logistic')
 clf.fit(train_X,train_y)
 predict_y=clf.predict_proba(test_X)[:,1]

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 train_data=pd.read_csv('train_data/训练数据集_tag.csv')
-test_data=pd.read_csv('评分数据集_tag.csv')
+test_data=pd.read_csv('评分数据集_tag_b.csv')
 train_data.drop(columns='atdd_type',inplace=True)
 train_data.drop(columns='deg_cd',inplace=True)
 train_data.drop(columns='edu_deg_cd',inplace=True)

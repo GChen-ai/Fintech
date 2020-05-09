@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 
-path_tag=['train_tag.csv','new_test_tag.csv']
-path_trd=['train_data/训练数据集_trd.csv','评分数据集_trd.csv']
+path_tag=['data/train_tag.csv','data/test_tag.csv']
+path_trd=['train_data/训练数据集_trd.csv','评分数据集_trd_b.csv']
 for i in range(len(path_tag)):
     trd_train_data=pd.read_csv(path_trd[i])
     train_data=pd.read_csv(path_tag[i])
@@ -35,7 +35,11 @@ for i in range(len(path_tag)):
     new_data['Trx_Cod1_Cd_2']=0
     new_data['Trx_Cod1_Cd_3']=0
     #二类代码，用一维，取众数
-    new_data['Trx_Cod2_Cd']=0
+    if i==0:
+        code2=trd_train_data['Trx_Cod2_Cd'].unique()
+    for j in code2:
+        col_name='Trx_Cod2_Cd_'+str(j)
+        new_data[col_name]=0
     #输入、支出分别的最大值、最小值、均值、次数
     new_data['B_amt_min']=0
     new_data['B_amt_max']=0
@@ -85,7 +89,10 @@ for i in range(len(path_tag)):
                 new_data['Trx_Cod1_Cd_3'].loc[index]=temp[temp['Trx_Cod1_Cd']=='3'].shape[0]
 
             #二级代码取众数
-            new_data['Trx_Cod2_Cd'].loc[index]=temp['Trx_Cod2_Cd'].mode()[0]
+            for k in code2:
+                col_name='Trx_Cod2_Cd_'+str(k)
+                if temp[temp['Trx_Cod2_Cd']==k].shape[0]!=0:
+                    new_data[col_name].loc[index]=temp[temp['Trx_Cod2_Cd']==k].shape[0]
 
             #收入支出的信息统计
             info_temp=temp[temp['Dat_Flg1_Cd']=='B']['cny_trx_amt']
@@ -144,6 +151,6 @@ for i in range(len(path_tag)):
     
     print(new_data.isnull().sum())
     if i==0:
-        new_data.to_csv('train_trd.csv')
+        new_data.to_csv('data/train_trd.csv')
     elif i==1:
-        new_data.to_csv('test_trd.csv')
+        new_data.to_csv('data/test_trd.csv')

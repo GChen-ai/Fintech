@@ -20,9 +20,9 @@ train_data,test_data=train_data.align(test_data,join='left',axis=1)
 
 train_X,test_X, train_y, test_y = train_test_split(train_data,
                                                    label,
-                                                   test_size = 0.2)
+                                                   test_size = 0.1)
 #clf=RandomForestClassifier(n_estimators=1000,n_jobs=-1,max_features='sqrt')
-clf=XGBClassifier(max_depth=3, learning_rate=0.1, n_estimators=1000, 
+clf=XGBClassifier(max_depth=4, learning_rate=0.1, n_estimators=1000, 
                    silent=True, objective='binary:logistic')
 clf.fit(train_X,train_y)
 predict_y=clf.predict_proba(test_X)[:,1]
