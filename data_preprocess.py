@@ -71,5 +71,79 @@ test_data['his_lng_ovd_day_cls']=0
 test_data['his_lng_ovd_day_cls'][test_data['his_lng_ovd_day']>0]=1
 test_data['his_lng_ovd_day_cls'][test_data['his_lng_ovd_day']<=0]=0
 
+# 年龄分类
+train_data['age_new']=0
+train_data['age_new'][train_data['age']>60]=3
+train_data['age_new'][(train_data['age']<=60)&(train_data['age']>50)]=2
+train_data['age_new'][(train_data['age']<=50)&(train_data['age']>40)]=1
+train_data['age_new'][(train_data['age']<=40)&(train_data['age']>30)]=0
+
+test_data['age_new']=0
+test_data['age_new'][test_data['age']>60]=3
+test_data['age_new'][(test_data['age']<=60)&(test_data['age']>50)]=2
+test_data['age_new'][(test_data['age']<=50)&(test_data['age']>40)]=1
+test_data['age_new'][(test_data['age']<=40)&(test_data['age']>30)]=0
+
+#工作年限分类
+train_data['job_year'] = train_data['job_year'].astype('int')
+test_data['job_year'] = test_data['job_year'].astype('int')
+
+train_data['job_new']=0
+train_data['job_new'][train_data['job_year']>30]=4
+train_data['job_new'][(train_data['job_year']<=30)&(train_data['job_year']>20)]=3
+train_data['job_new'][(train_data['job_year']<=20)&(train_data['job_year']>10)]=2
+train_data['job_new'][(train_data['job_year']<=10)&(train_data['job_year']>0)]=1
+
+
+test_data['job_new']=0
+test_data['job_new'][test_data['job_year']>30]=4
+test_data['job_new'][(test_data['job_year']<=30)&(test_data['job_year']>20)]=3
+test_data['job_new'][(test_data['job_year']<=20)&(test_data['job_year']>10)]=2
+test_data['job_new'][(test_data['job_year']<=10)&(test_data['job_year']>0)]=1
+
+##借记卡按-1，1-5年，5-10年，10年以上分类
+train_data['cur_debit_min_opn_dt_cnt'] = train_data['cur_debit_min_opn_dt_cnt'].astype('int')
+test_data['cur_debit_min_opn_dt_cnt'] = test_data['cur_debit_min_opn_dt_cnt'].astype('int')
+
+train_data['cur_debit_min_opn_dt_cnt_new']=-1
+train_data['cur_debit_min_opn_dt_cnt_new'][(train_data['cur_debit_min_opn_dt_cnt']>-1)&(train_data['cur_debit_min_opn_dt_cnt']<=1825)]=1
+train_data['cur_debit_min_opn_dt_cnt_new'][(train_data['cur_debit_min_opn_dt_cnt']>1825)&(train_data['cur_debit_min_opn_dt_cnt']<=3650)]=2
+train_data['cur_debit_min_opn_dt_cnt_new'][(train_data['cur_debit_min_opn_dt_cnt']>3650)]=3
+
+
+test_data['cur_debit_min_opn_dt_cnt_new']=-1
+test_data['cur_debit_min_opn_dt_cnt_new'][(test_data['cur_debit_min_opn_dt_cnt']>-1)&(test_data['cur_debit_min_opn_dt_cnt']<=1825)]=1
+test_data['cur_debit_min_opn_dt_cnt_new'][(test_data['cur_debit_min_opn_dt_cnt']>1825)&(test_data['cur_debit_min_opn_dt_cnt']<=3650)]=2
+test_data['cur_debit_min_opn_dt_cnt_new'][(test_data['cur_debit_min_opn_dt_cnt']>3650)]=3
+
+#按-1，1-3年，3-5年，5-10年，10年以上分类
+train_data['cur_credit_min_opn_dt_cnt'] = train_data['cur_credit_min_opn_dt_cnt'].astype('int')
+test_data['cur_credit_min_opn_dt_cnt'] = test_data['cur_credit_min_opn_dt_cnt'].astype('int')
+
+train_data['cur_credit_min_opn_dt_cnt_new']=-1
+train_data['cur_credit_min_opn_dt_cnt_new'][(train_data['cur_credit_min_opn_dt_cnt']>-1)&(train_data['cur_credit_min_opn_dt_cnt']<=1095)]=1
+train_data['cur_credit_min_opn_dt_cnt_new'][(train_data['cur_credit_min_opn_dt_cnt']>1095)&(train_data['cur_credit_min_opn_dt_cnt']<=1825)]=2
+train_data['cur_credit_min_opn_dt_cnt_new'][(train_data['cur_credit_min_opn_dt_cnt']>1825)&(train_data['cur_credit_min_opn_dt_cnt']<=3650)]=3
+train_data['cur_credit_min_opn_dt_cnt_new'][(train_data['cur_credit_min_opn_dt_cnt']>3650)]=4
+
+test_data['cur_credit_min_opn_dt_cnt_new']=-1
+test_data['cur_credit_min_opn_dt_cnt_new'][(test_data['cur_credit_min_opn_dt_cnt']>-1)&(test_data['cur_credit_min_opn_dt_cnt']<=1095)]=1
+test_data['cur_credit_min_opn_dt_cnt_new'][(test_data['cur_credit_min_opn_dt_cnt']>1095)&(test_data['cur_credit_min_opn_dt_cnt']<=1825)]=2
+test_data['cur_credit_min_opn_dt_cnt_new'][(test_data['cur_credit_min_opn_dt_cnt']>1825)&(test_data['cur_credit_min_opn_dt_cnt']<=3650)]=1
+test_data['cur_credit_min_opn_dt_cnt_new'][(test_data['cur_credit_min_opn_dt_cnt']>3650)]=4
+
+#按不逾期，逾期一笔，逾期一笔以上分类计算
+train_data['ovd_30d_loan_tot_cnt'] = train_data['ovd_30d_loan_tot_cnt'].astype('int')
+test_data['ovd_30d_loan_tot_cnt'] = test_data['ovd_30d_loan_tot_cnt'].astype('int')
+
+train_data['ovd_30d_loan_tot_cnt_new']=0
+train_data['ovd_30d_loan_tot_cnt_new'][train_data['ovd_30d_loan_tot_cnt']==1]=1
+train_data['ovd_30d_loan_tot_cnt_new'][train_data['ovd_30d_loan_tot_cnt']>1]=2
+
+
+test_data['ovd_30d_loan_tot_cnt_new']=0
+test_data['ovd_30d_loan_tot_cnt_new'][test_data['ovd_30d_loan_tot_cnt']==1]=1
+test_data['ovd_30d_loan_tot_cnt_new'][test_data['ovd_30d_loan_tot_cnt']>1]=2
+
 train_data.to_csv('data/train_tag.csv',index=False)
 test_data.to_csv('data/test_tag.csv',index=False)
