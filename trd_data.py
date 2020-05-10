@@ -16,6 +16,8 @@ for i in range(len(path_tag)):
     trd_train_data['month']=trd_train_data['date'].dt.month
     trd_train_data['hour']=trd_train_data['date'].dt.hour
     trd_train_data['hour']=trd_train_data['hour'].astype('int')
+    trd_train_data['week']=trd_train_data['date'].dt.dayofweek
+    trd_train_data['week']=trd_train_data['week'].astype('int')
     #时间转换成4类
     trd_train_data['midnight']=0
     trd_train_data['morning']=0
@@ -30,44 +32,55 @@ for i in range(len(path_tag)):
     new_data['Dir_A']=0
     new_data['Dir_B']=0
     new_data['Dir_C']=0
+    new_data['num_pay']=0
     #一类代码，有三级，分三维统计个数
     new_data['Trx_Cod1_Cd_1']=0
     new_data['Trx_Cod1_Cd_2']=0
     new_data['Trx_Cod1_Cd_3']=0
-    #二类代码，用一维，取众数
+    #二类代码
     if i==0:
         code2=trd_train_data['Trx_Cod2_Cd'].unique()
     for j in code2:
         col_name='Trx_Cod2_Cd_'+str(j)
         new_data[col_name]=0
-    #输入、支出分别的最大值、最小值、均值、次数
+    #收入、支出的各种统计量
     new_data['B_amt_min']=0
     new_data['B_amt_max']=0
     new_data['B_amt_mean']=0
+    new_data['B_amt_median']=0
+    new_data['B_amt_Range']=0
+    new_data['B_amt_var']=0
+    new_data['B_amt_skew']=0
     new_data['B_amt_count']=0
+    new_data['B_amt_kurt']=0
+    
 
     new_data['C_amt_min']=0
     new_data['C_amt_max']=0
     new_data['C_amt_mean']=0
+    new_data['C_amt_median']=0
+    new_data['C_amt_Range']=0
+    new_data['C_amt_var']=0
+    new_data['C_amt_skew']=0
     new_data['C_amt_count']=0
+    new_data['C_amt_kurt']=0
 
     new_data['midnight']=0
     new_data['morning']=0
     new_data['afternoon']=0
     new_data['night']=0
 
-    new_data['month_1']=0
-    new_data['month_2']=0
-    new_data['month_3']=0
-    new_data['month_4']=0
     new_data['month_5']=0
     new_data['month_6']=0
-    new_data['month_7']=0
-    new_data['month_8']=0
-    new_data['month_9']=0
-    new_data['month_10']=0
-    new_data['month_11']=0
-    new_data['month_12']=0
+
+    new_data['week_0']=0
+    new_data['week_1']=0
+    new_data['week_2']=0
+    new_data['week_3']=0
+    new_data['week_4']=0
+    new_data['week_5']=0
+    new_data['week_6']=0
+
     trd_train_data=trd_train_data.groupby('id')
     for index,row in trd_train_data:
         temp=trd_train_data.get_group(index)
@@ -79,6 +92,7 @@ for i in range(len(path_tag)):
                 new_data['Dir_B'].loc[index]=temp[temp['Dat_Flg3_Cd']=='B'].shape[0]
             if temp[temp['Dat_Flg3_Cd']=='C'].shape[0]!=0:
                 new_data['Dir_C'].loc[index]=temp[temp['Dat_Flg3_Cd']=='C'].shape[0]
+            new_data['num_pay'].loc[index]=new_data['Dir_A'].loc[index]+new_data['Dir_B'].loc[index]+new_data['Dir_C'].loc[index]
 
             #一级代码统计
             if temp[temp['Trx_Cod1_Cd']=='1'].shape[0]!=0:
@@ -88,7 +102,7 @@ for i in range(len(path_tag)):
             if temp[temp['Trx_Cod1_Cd']=='3'].shape[0]!=0:
                 new_data['Trx_Cod1_Cd_3'].loc[index]=temp[temp['Trx_Cod1_Cd']=='3'].shape[0]
 
-            #二级代码取众数
+            #二级代码统计次数
             for k in code2:
                 col_name='Trx_Cod2_Cd_'+str(k)
                 if temp[temp['Trx_Cod2_Cd']==k].shape[0]!=0:
@@ -100,14 +114,30 @@ for i in range(len(path_tag)):
                 new_data['B_amt_min'].loc[index]=info_temp.min()
                 new_data['B_amt_max'].loc[index]=info_temp.max()
                 new_data['B_amt_mean'].loc[index]=info_temp.mean()
+                new_data['B_amt_median'].loc[index]=info_temp.median()
+                if not pd.isnull(info_temp.var()):
+                    new_data['B_amt_var'].loc[index]=info_temp.var()
                 new_data['B_amt_count'].loc[index]=info_temp.shape[0]
+                if not pd.isnull(info_temp.skew()):
+                    new_data['B_amt_skew'].loc[index]=info_temp.skew()
+                if not pd.isnull(info_temp.kurt()):
+                    new_data['B_amt_kurt'].loc[index]=info_temp.kurt()
+                new_data['B_amt_Range'].loc[index]=abs(new_data['B_amt_max'].loc[index]-new_data['B_amt_min'].loc[index])
 
             info_temp=temp[temp['Dat_Flg1_Cd']=='C']['cny_trx_amt']
             if info_temp.shape[0]!=0:
                 new_data['C_amt_min'].loc[index]=info_temp.min()
                 new_data['C_amt_max'].loc[index]=info_temp.max()
                 new_data['C_amt_mean'].loc[index]=info_temp.mean()
+                new_data['C_amt_median'].loc[index]=info_temp.median()
+                if not pd.isnull(info_temp.var()):
+                    new_data['C_amt_var'].loc[index]=info_temp.var()
                 new_data['C_amt_count'].loc[index]=info_temp.shape[0]
+                if not pd.isnull(info_temp.skew()):
+                    new_data['C_amt_skew'].loc[index]=info_temp.skew()
+                if not pd.isnull(info_temp.kurt()):
+                    new_data['C_amt_kurt'].loc[index]=info_temp.kurt()
+                new_data['C_amt_Range'].loc[index]=abs(new_data['C_amt_max'].loc[index]-new_data['C_amt_min'].loc[index])
 
             #交易时间段统计
             if temp[temp['midnight']==1].shape[0]!=0:
@@ -119,31 +149,26 @@ for i in range(len(path_tag)):
             if temp[temp['night']==1].shape[0]!=0:
                 new_data['night'].loc[index]=temp[temp['night']==1].shape[0]
             
-            #交易月份统计
-            if temp[temp['month']==1].shape[0]!=0:
-                new_data['month_1'].loc[index]=temp[temp['month']==1].shape[0]
-            if temp[temp['month']==2].shape[0]!=0:
-                new_data['month_2'].loc[index]=temp[temp['month']==2].shape[0]
-            if temp[temp['month']==3].shape[0]!=0:
-                new_data['month_3'].loc[index]=temp[temp['month']==3].shape[0]
-            if temp[temp['month']==4].shape[0]!=0:
-                new_data['month_4'].loc[index]=temp[temp['month']==4].shape[0]
+            #交易月份统计，只有5月和六月
             if temp[temp['month']==5].shape[0]!=0:
                 new_data['month_5'].loc[index]=temp[temp['month']==5].shape[0]
             if temp[temp['month']==6].shape[0]!=0:
                 new_data['month_6'].loc[index]=temp[temp['month']==6].shape[0]
-            if temp[temp['month']==7].shape[0]!=0:
-                new_data['month_7'].loc[index]=temp[temp['month']==7].shape[0]
-            if temp[temp['month']==8].shape[0]!=0:
-                new_data['month_8'].loc[index]=temp[temp['month']==8].shape[0]
-            if temp[temp['month']==9].shape[0]!=0:
-                new_data['month_9'].loc[index]=temp[temp['month']==9].shape[0]
-            if temp[temp['month']==10].shape[0]!=0:
-                new_data['month_10'].loc[index]=temp[temp['month']==10].shape[0]
-            if temp[temp['month']==11].shape[0]!=0:
-                new_data['month_11'].loc[index]=temp[temp['month']==11].shape[0]
-            if temp[temp['month']==12].shape[0]!=0:
-                new_data['month_12'].loc[index]=temp[temp['month']==12].shape[0]
+            
+            if temp[temp['week']==0].shape[0]!=0:
+                new_data['week_0'].loc[index]=temp[temp['week']==0].shape[0]
+            if temp[temp['week']==1].shape[0]!=0:
+                new_data['week_1'].loc[index]=temp[temp['week']==1].shape[0]
+            if temp[temp['week']==2].shape[0]!=0:
+                new_data['week_2'].loc[index]=temp[temp['week']==2].shape[0]
+            if temp[temp['week']==3].shape[0]!=0:
+                new_data['week_3'].loc[index]=temp[temp['week']==3].shape[0]
+            if temp[temp['week']==4].shape[0]!=0:
+                new_data['week_4'].loc[index]=temp[temp['week']==4].shape[0]
+            if temp[temp['week']==5].shape[0]!=0:
+                new_data['week_5'].loc[index]=temp[temp['week']==5].shape[0]
+            if temp[temp['week']==6].shape[0]!=0:
+                new_data['week_6'].loc[index]=temp[temp['week']==6].shape[0]  
     #二级代码One-hot
     #temp=pd.get_dummies(new_data['Trx_Cod2_Cd'],prefix="code2").astype('float')
     #new_data[temp.columns]=temp
