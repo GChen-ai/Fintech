@@ -40,4 +40,3 @@ tag_test_data=tag_test_data[~tag_test_data['id'].isin(test_data['id'])]
 train_data.to_csv('data/trd_and_tag_train_data.csv',index=False)
 test_data.to_csv('data/trd_and_tag_test_data.csv',index=False)
 
-tag_test_data.to_csv('data/test_tag.csv',index=False)

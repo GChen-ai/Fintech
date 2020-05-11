@@ -34,7 +34,7 @@ train_data.drop(columns='edu_deg_cd',inplace=True)
 temp=pd.get_dummies(test_data['edu_deg_cd'],prefix='edu_deg_cd').astype('int')
 test_data[temp.columns]=temp
 test_data.drop(columns='edu_deg_cd',inplace=True)
-
+test_data['edu_deg_cd_J']=0
 
 #'mrg_situ_cd'有6类，onehot
 temp=pd.get_dummies(train_data['mrg_situ_cd'],prefix="mrg_situ_cd").astype('int')
@@ -99,16 +99,18 @@ test_data['his_lng_ovd_day_cls'][test_data['his_lng_ovd_day']>0]=1
 test_data['his_lng_ovd_day_cls'][test_data['his_lng_ovd_day']<=0]=0
 
 train_data['age_new']=0
-train_data['age_new'][train_data['age']>60]=3
-train_data['age_new'][(train_data['age']<=60)&(train_data['age']>50)]=2
-train_data['age_new'][(train_data['age']<=50)&(train_data['age']>40)]=1
-train_data['age_new'][(train_data['age']<=40)&(train_data['age']>30)]=0
+train_data['age_new'][train_data['age']>60]=4
+train_data['age_new'][(train_data['age']<=60)&(train_data['age']>50)]=3
+train_data['age_new'][(train_data['age']<=50)&(train_data['age']>40)]=2
+train_data['age_new'][(train_data['age']<=40)&(train_data['age']>30)]=1
+train_data['age_new'][(train_data['age']<=30)]=0
 
 test_data['age_new']=0
-test_data['age_new'][test_data['age']>60]=3
-test_data['age_new'][(test_data['age']<=60)&(test_data['age']>50)]=2
-test_data['age_new'][(test_data['age']<=50)&(test_data['age']>40)]=1
-test_data['age_new'][(test_data['age']<=40)&(test_data['age']>30)]=0
+test_data['age_new'][test_data['age']>60]=4
+test_data['age_new'][(test_data['age']<=60)&(test_data['age']>50)]=3
+test_data['age_new'][(test_data['age']<=50)&(test_data['age']>40)]=2
+test_data['age_new'][(test_data['age']<=40)&(test_data['age']>30)]=1
+test_data['age_new'][(test_data['age']<30)]=0
 
 #工作年限分类
 train_data['job_year'] = train_data['job_year'].astype('int')
@@ -155,7 +157,7 @@ train_data['cur_credit_min_opn_dt_cnt_new'][(train_data['cur_credit_min_opn_dt_c
 test_data['cur_credit_min_opn_dt_cnt_new']=-1
 test_data['cur_credit_min_opn_dt_cnt_new'][(test_data['cur_credit_min_opn_dt_cnt']>-1)&(test_data['cur_credit_min_opn_dt_cnt']<=1095)]=1
 test_data['cur_credit_min_opn_dt_cnt_new'][(test_data['cur_credit_min_opn_dt_cnt']>1095)&(test_data['cur_credit_min_opn_dt_cnt']<=1825)]=2
-test_data['cur_credit_min_opn_dt_cnt_new'][(test_data['cur_credit_min_opn_dt_cnt']>1825)&(test_data['cur_credit_min_opn_dt_cnt']<=3650)]=1
+test_data['cur_credit_min_opn_dt_cnt_new'][(test_data['cur_credit_min_opn_dt_cnt']>1825)&(test_data['cur_credit_min_opn_dt_cnt']<=3650)]=3
 test_data['cur_credit_min_opn_dt_cnt_new'][(test_data['cur_credit_min_opn_dt_cnt']>3650)]=4
 
 #按不逾期，逾期一笔，逾期一笔以上分类计算
@@ -171,6 +173,13 @@ test_data['ovd_30d_loan_tot_cnt_new']=0
 test_data['ovd_30d_loan_tot_cnt_new'][test_data['ovd_30d_loan_tot_cnt']==1]=1
 test_data['ovd_30d_loan_tot_cnt_new'][test_data['ovd_30d_loan_tot_cnt']>1]=2
 
+#持卡天数/工龄
+train_data['debit_dt_cnt_year']=train_data['cur_debit_min_opn_dt_cnt']/(train_data['job_year']+1)
+test_data['debit_dt_cnt_year']=test_data['cur_debit_min_opn_dt_cnt']/(test_data['job_year']+1)
+
+#工龄减持卡天数
+train_data['debit_dt_cnt_start']=train_data['job_year']*365-train_data['cur_debit_min_opn_dt_cnt']
+test_data['debit_dt_cnt_start']=test_data['job_year']*365-test_data['cur_debit_min_opn_dt_cnt']
 
 train_data['cur_debit_min_opn_dt_cnt']=(train_data['cur_debit_min_opn_dt_cnt']-train_data['cur_debit_min_opn_dt_cnt'].min())/(train_data['cur_debit_min_opn_dt_cnt'].max()-train_data['cur_debit_min_opn_dt_cnt'].min())
 train_data['cur_credit_min_opn_dt_cnt']=(train_data['cur_credit_min_opn_dt_cnt']-train_data['cur_credit_min_opn_dt_cnt'].min())/(train_data['cur_credit_min_opn_dt_cnt'].max()-train_data['cur_credit_min_opn_dt_cnt'].min())
@@ -179,6 +188,7 @@ train_data['cur_debit_cnt']=(train_data['cur_debit_cnt']-train_data['cur_debit_c
 train_data['cur_credit_cnt']=(train_data['cur_credit_cnt']-train_data['cur_credit_cnt'].min())/(train_data['cur_credit_cnt'].max()-train_data['cur_credit_cnt'].min())
 train_data['cur_cnt']=(train_data['cur_credit_cnt']-train_data['cur_cnt'].min())/(train_data['cur_cnt'].max()-train_data['cur_cnt'].min())
 train_data['age']=(train_data['age']-train_data['age'].min())/(train_data['age'].max()-train_data['age'].min())
+train_data['frs_agn_dt_cnt']=(train_data['frs_agn_dt_cnt']-train_data['frs_agn_dt_cnt'].min())/(train_data['frs_agn_dt_cnt'].max()-train_data['frs_agn_dt_cnt'].min())
 
 test_data['cur_debit_min_opn_dt_cnt']=(test_data['cur_debit_min_opn_dt_cnt']-test_data['cur_debit_min_opn_dt_cnt'].min())/(test_data['cur_debit_min_opn_dt_cnt'].max()-test_data['cur_debit_min_opn_dt_cnt'].min())
 test_data['cur_credit_min_opn_dt_cnt']=(test_data['cur_credit_min_opn_dt_cnt']-test_data['cur_credit_min_opn_dt_cnt'].min())/(test_data['cur_credit_min_opn_dt_cnt'].max()-test_data['cur_credit_min_opn_dt_cnt'].min())
@@ -187,5 +197,12 @@ test_data['cur_debit_cnt']=(test_data['cur_debit_cnt']-test_data['cur_debit_cnt'
 test_data['cur_credit_cnt']=(test_data['cur_credit_cnt']-test_data['cur_credit_cnt'].min())/(test_data['cur_credit_cnt'].max()-test_data['cur_credit_cnt'].min())
 test_data['cur_cnt']=(test_data['cur_cnt']-test_data['cur_cnt'].min())/(test_data['cur_cnt'].max()-test_data['cur_cnt'].min())
 test_data['age']=(test_data['age']-test_data['age'].min())/(test_data['age'].max()-test_data['age'].min())
+test_data['frs_agn_dt_cnt']=(test_data['frs_agn_dt_cnt']-test_data['frs_agn_dt_cnt'].min())/(test_data['frs_agn_dt_cnt'].max()-test_data['frs_agn_dt_cnt'].min())
+
+
+
+train_data['no_car_hou']=1
+train_data['no_car_hou'][(train_data['hav_car_grp_ind']==1) & (train_data['hav_hou_grp_ind']==1)]=0
+
 train_data.to_csv('data/train_tag.csv',index=False)
 test_data.to_csv('data/test_tag.csv',index=False)

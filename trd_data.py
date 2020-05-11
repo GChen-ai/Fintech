@@ -14,6 +14,7 @@ for i in range(len(path_tag)):
     new_data=new_data.set_index('id')
     trd_train_data['date'] = pd.to_datetime(trd_train_data['trx_tm'], format='%Y/%m/%d')
     trd_train_data['month']=trd_train_data['date'].dt.month
+    trd_train_data['month']=trd_train_data['month'].astype('int')
     trd_train_data['hour']=trd_train_data['date'].dt.hour
     trd_train_data['hour']=trd_train_data['hour'].astype('int')
     trd_train_data['week']=trd_train_data['date'].dt.dayofweek
@@ -53,6 +54,29 @@ for i in range(len(path_tag)):
     new_data['B_amt_skew']=0
     new_data['B_amt_count']=0
     new_data['B_amt_kurt']=0
+    new_data['B_day']=0
+
+    new_data['B_amt_min5']=0
+    new_data['B_amt_max5']=0
+    new_data['B_amt_mean5']=0
+    new_data['B_amt_median5']=0
+    new_data['B_amt_Range5']=0
+    new_data['B_amt_var5']=0
+    new_data['B_amt_skew5']=0
+    new_data['B_amt_count5']=0
+    new_data['B_amt_kurt5']=0
+    new_data['B_5_day']=0
+
+    new_data['B_amt_min6']=0
+    new_data['B_amt_max6']=0
+    new_data['B_amt_mean6']=0
+    new_data['B_amt_median6']=0
+    new_data['B_amt_Range6']=0
+    new_data['B_amt_var6']=0
+    new_data['B_amt_skew6']=0
+    new_data['B_amt_count6']=0
+    new_data['B_amt_kurt6']=0
+    new_data['B_6_day']=0
     
 
     new_data['C_amt_min']=0
@@ -64,6 +88,29 @@ for i in range(len(path_tag)):
     new_data['C_amt_skew']=0
     new_data['C_amt_count']=0
     new_data['C_amt_kurt']=0
+    new_data['C_day']=0
+
+    new_data['C_amt_min5']=0
+    new_data['C_amt_max5']=0
+    new_data['C_amt_mean5']=0
+    new_data['C_amt_median5']=0
+    new_data['C_amt_Range5']=0
+    new_data['C_amt_var5']=0
+    new_data['C_amt_skew5']=0
+    new_data['C_amt_count5']=0
+    new_data['C_amt_kurt5']=0
+    new_data['C_5_day']=0
+
+    new_data['C_amt_min6']=0
+    new_data['C_amt_max6']=0
+    new_data['C_amt_mean6']=0
+    new_data['C_amt_median6']=0
+    new_data['C_amt_Range6']=0
+    new_data['C_amt_var6']=0
+    new_data['C_amt_skew6']=0
+    new_data['C_amt_count6']=0
+    new_data['C_amt_kurt6']=0
+    new_data['C_6_day']=0
 
     new_data['midnight']=0
     new_data['morning']=0
@@ -109,7 +156,7 @@ for i in range(len(path_tag)):
                     new_data[col_name].loc[index]=temp[temp['Trx_Cod2_Cd']==k].shape[0]
 
             #收入支出的信息统计
-            info_temp=temp[temp['Dat_Flg1_Cd']=='B']['cny_trx_amt']
+            info_temp=temp[(temp['Dat_Flg1_Cd']=='B')]['cny_trx_amt']
             if info_temp.shape[0]!=0:
                 new_data['B_amt_min'].loc[index]=info_temp.min()
                 new_data['B_amt_max'].loc[index]=info_temp.max()
@@ -123,6 +170,39 @@ for i in range(len(path_tag)):
                 if not pd.isnull(info_temp.kurt()):
                     new_data['B_amt_kurt'].loc[index]=info_temp.kurt()
                 new_data['B_amt_Range'].loc[index]=abs(new_data['B_amt_max'].loc[index]-new_data['B_amt_min'].loc[index])
+                new_data['B_day']=info_temp.sum()/61
+                
+            info_temp=temp[(temp['Dat_Flg1_Cd']=='B') & (temp['month']==5)]['cny_trx_amt']
+            if info_temp.shape[0]!=0:
+                new_data['B_amt_min5'].loc[index]=info_temp.min()
+                new_data['B_amt_max5'].loc[index]=info_temp.max()
+                new_data['B_amt_mean5'].loc[index]=info_temp.mean()
+                new_data['B_amt_median5'].loc[index]=info_temp.median()
+                if not pd.isnull(info_temp.var()):
+                    new_data['B_amt_var5'].loc[index]=info_temp.var()
+                new_data['B_amt_count5'].loc[index]=info_temp.shape[0]
+                if not pd.isnull(info_temp.skew()):
+                    new_data['B_amt_skew5'].loc[index]=info_temp.skew()
+                if not pd.isnull(info_temp.kurt()):
+                    new_data['B_amt_kurt5'].loc[index]=info_temp.kurt()
+                new_data['B_amt_Range5'].loc[index]=abs(new_data['B_amt_max6'].loc[index]-new_data['B_amt_min6'].loc[index])
+                new_data['B_5_day']=info_temp.sum()/31
+
+            info_temp=temp[(temp['Dat_Flg1_Cd']=='B') & (temp['month']==6)]['cny_trx_amt']
+            if info_temp.shape[0]!=0:
+                new_data['B_amt_min6'].loc[index]=info_temp.min()
+                new_data['B_amt_max6'].loc[index]=info_temp.max()
+                new_data['B_amt_mean6'].loc[index]=info_temp.mean()
+                new_data['B_amt_median6'].loc[index]=info_temp.median()
+                if not pd.isnull(info_temp.var()):
+                    new_data['B_amt_var6'].loc[index]=info_temp.var()
+                new_data['B_amt_count6'].loc[index]=info_temp.shape[0]
+                if not pd.isnull(info_temp.skew()):
+                    new_data['B_amt_skew6'].loc[index]=info_temp.skew()
+                if not pd.isnull(info_temp.kurt()):
+                    new_data['B_amt_kurt6'].loc[index]=info_temp.kurt()
+                new_data['B_amt_Range6'].loc[index]=abs(new_data['B_amt_max6'].loc[index]-new_data['B_amt_min6'].loc[index])
+                new_data['B_6_day']=info_temp.sum()/30
 
             info_temp=temp[temp['Dat_Flg1_Cd']=='C']['cny_trx_amt']
             if info_temp.shape[0]!=0:
@@ -138,6 +218,39 @@ for i in range(len(path_tag)):
                 if not pd.isnull(info_temp.kurt()):
                     new_data['C_amt_kurt'].loc[index]=info_temp.kurt()
                 new_data['C_amt_Range'].loc[index]=abs(new_data['C_amt_max'].loc[index]-new_data['C_amt_min'].loc[index])
+                new_data['C_day']=info_temp.sum()/61
+                
+            info_temp=temp[(temp['Dat_Flg1_Cd']=='C') & (temp['month']==5)]['cny_trx_amt']
+            if info_temp.shape[0]!=0:
+                new_data['C_amt_min5'].loc[index]=info_temp.min()
+                new_data['C_amt_max5'].loc[index]=info_temp.max()
+                new_data['C_amt_mean5'].loc[index]=info_temp.mean()
+                new_data['C_amt_median5'].loc[index]=info_temp.median()
+                if not pd.isnull(info_temp.var()):
+                    new_data['C_amt_var5'].loc[index]=info_temp.var()
+                new_data['C_amt_count5'].loc[index]=info_temp.shape[0]
+                if not pd.isnull(info_temp.skew()):
+                    new_data['C_amt_skew5'].loc[index]=info_temp.skew()
+                if not pd.isnull(info_temp.kurt()):
+                    new_data['C_amt_kurt5'].loc[index]=info_temp.kurt()
+                new_data['C_amt_Range5'].loc[index]=abs(new_data['C_amt_max6'].loc[index]-new_data['C_amt_min6'].loc[index])
+                new_data['C_5_day']=info_temp.sum()/31
+
+            info_temp=temp[(temp['Dat_Flg1_Cd']=='C') & (temp['month']==6)]['cny_trx_amt']
+            if info_temp.shape[0]!=0:
+                new_data['C_amt_min6'].loc[index]=info_temp.min()
+                new_data['C_amt_max6'].loc[index]=info_temp.max()
+                new_data['C_amt_mean6'].loc[index]=info_temp.mean()
+                new_data['C_amt_median6'].loc[index]=info_temp.median()
+                if not pd.isnull(info_temp.var()):
+                    new_data['C_amt_var6'].loc[index]=info_temp.var()
+                new_data['C_amt_count6'].loc[index]=info_temp.shape[0]
+                if not pd.isnull(info_temp.skew()):
+                    new_data['C_amt_skew6'].loc[index]=info_temp.skew()
+                if not pd.isnull(info_temp.kurt()):
+                    new_data['C_amt_kurt6'].loc[index]=info_temp.kurt()
+                new_data['C_amt_Range6'].loc[index]=abs(new_data['C_amt_max6'].loc[index]-new_data['C_amt_min6'].loc[index])
+                new_data['C_6_day']=info_temp.sum()/30
 
             #交易时间段统计
             if temp[temp['midnight']==1].shape[0]!=0:

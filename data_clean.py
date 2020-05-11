@@ -5,11 +5,19 @@ train_data=pd.read_csv('train_data/训练数据集_tag.csv',index_col=0)
 test_data=pd.read_csv('评分数据集_tag_b.csv',index_col=0)
 
 train_data['atdd_type'].fillna(value=-1,inplace=True)
+train_data['atdd_type'][train_data['atdd_type']=='\\N']=train_data['atdd_type'].mode()[0]
 test_data['atdd_type'].fillna(value=-1,inplace=True)
+test_data['atdd_type'][test_data['atdd_type']=='\\N']=test_data['atdd_type'].mode()[0]
+
 train_data['deg_cd'].fillna(value=-1,inplace=True)
+train_data['deg_cd'][train_data['deg_cd']=='\\N']=train_data['deg_cd'].mode()[0]
 test_data['deg_cd'].fillna(value=-1,inplace=True)
+test_data['deg_cd'][test_data['deg_cd']=='\\N']=test_data['deg_cd'].mode()[0]
+
 train_data['edu_deg_cd'].fillna(value=-1,inplace=True)
+train_data['edu_deg_cd'][train_data['edu_deg_cd']=='\\N']=train_data['edu_deg_cd'].mode()[0]
 test_data['edu_deg_cd'].fillna(value=-1,inplace=True)
+test_data['edu_deg_cd'][test_data['edu_deg_cd']=='\\N']=test_data['edu_deg_cd'].mode()[0]
 #train_data.drop(columns='deg_cd',inplace=True)
 #train_data.drop(columns='edu_deg_cd',inplace=True)
 
